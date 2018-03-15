@@ -17,6 +17,21 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('User connected to socket');
 
+  // socket.emit('newMessage', {
+  //   sender: 'Jdub',
+  //   text: 'Whats UP?',
+  //   sentDate: new Date().getTime()
+  // });
+
+  socket.on('sendMessage', (message) => {
+    console.log('Received send message', message);
+    io.emit('newMessage', {
+      sender: message.sender,
+      text: message.text,
+      sentDate: new Date().getTime()
+    });
+  });
+
   socket.on('disconnect', () => {
     console.log('User disconnected from server');
   });
