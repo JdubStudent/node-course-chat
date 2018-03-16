@@ -15,16 +15,21 @@ socket.on('disconnect', () => {
 socket.on('newMessage', (message) => {
   console.log('New Message', message);
 
+  var formattedt = moment(message.sendDate).format('h:mm a');
+
   var li = jQuery('<li></li>');
-  li.text(`${message.sender}: ${message.text}`);
+  li.text(`${message.sender} ${formattedt}: ${message.text}`);
   
   jQuery('#messages').append(li);
 });
 
 socket.on('newGeolocationMessage', (message) => {
+  var formattedt = moment(message.sendDate).format('h:mm a');
+
   var li = jQuery('<li></li>');
   var a = jQuery('<a target="_blank">My Current Location</a>');
-  li.text(`${message.sender}: `);
+
+  li.text(`${message.sender} ${formattedt}: `);
   a.attr('href', message.url);
 
   li.append(a);

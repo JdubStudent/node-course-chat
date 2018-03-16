@@ -10,7 +10,7 @@ var generateLocation = (sender, coords) => {
   return {
     sender,
     url,
-    createdAt: new Date().getTime()
+    sendDate: new Date().getTime()
   };
 };
 
