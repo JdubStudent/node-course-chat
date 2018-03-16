@@ -21,11 +21,19 @@ io.on('connection', (socket) => {
   socket.emit(msg.NEW, msg.generate('Admin', 'Welcome to the Chat!'));
   socket.broadcast.emit(msg.NEW, msg.generate('Admin', 'New user joined chat'));
 
-  socket.on(msg.SEND, (message) => {
+  socket.on(msg.SEND, (message, callback) => {
     console.log('Received send message', message);
-    // io.emit(msg.NEW, msg.generate(message.sender, message.text));
-    socket.broadcast.emit(msg.NEW, msg.generate(message.sender, message.text));
+    io.emit(msg.NEW, msg.generate(message.sender, message.text));
+    // socket.broadcast.emit(msg.NEW, msg.generate(message.sender, message.text));
+    callback();
   });
+
+  socket.on(msg.SENDLOC, (message, callback) => {
+    console.log(message);
+    var l = message.location;
+    callback();
+    io.emit(msg.NEWLOC, msg.generateLocation(message.sender, message.location));
+  })
 
   socket.on('disconnect', () => {
     console.log('User disconnected from server');

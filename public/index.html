@@ -6,27 +6,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="/css/styles.css">
   <title>Jdub Chat</title>
 </head>
-<body>
-  <p>Welcome to Jdubs chat app!</p>
+<body class="chat">
+  <!-- <p>Welcome to Jdubs chat app!</p> -->
 
-  <form id="username-form">
-      Username: <input name="username" type="text" placeholder="choose wisely..."/>
-  </form>
+  <div class="chat__sidebar">
+    <h3>Me</h3>
+    <form id="username-form">
+        Username: <input name="username" type="text" placeholder="choose wisely..."/>
+    </form>
+    <hr>
+    <h3>People</h3>
+    <div id="users"></div>
+  </div>
 
-  <hr>
+  <div class="chat__main">
+    <ul id="messages" class="chat__messages">
 
-  <ul id="messages">
+    </ul>
 
-  </ul>
-
-  <hr>
-
-  <form id="message-form">
-    <input name="message" type="text" placeholder="Message"/>
-    <button>Send</button>
-  </form>
+    <div class="chat__footer">
+      <form id="message-form">
+        <input name="message" type="text" placeholder="Message" autofocus autocomplete="off"/>
+        <button>Send</button>
+      </form>
+      <button id="send-location">Send Location</button>
+    </div>
+    
+  </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/libs/jquery-3.3.1.min.js"></script>
