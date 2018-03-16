@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express');
 const socketIO = require('socket.io');
 const http = require('http');
+const msg = require('./utils/message');
 
 var app = express();
 var server = http.createServer(app);
@@ -17,19 +18,13 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('User connected to socket');
 
-  // socket.emit('newMessage', {
-  //   sender: 'Jdub',
-  //   text: 'Whats UP?',
-  //   sentDate: new Date().getTime()
-  // });
+  socket.emit(msg.NEW, msg.generate('Admin', 'Welcome to the Chat!'));
+  socket.broadcast.emit(msg.NEW, msg.generate('Admin', 'New user joined chat'));
 
-  socket.on('sendMessage', (message) => {
+  socket.on(msg.SEND, (message) => {
     console.log('Received send message', message);
-    io.emit('newMessage', {
-      sender: message.sender,
-      text: message.text,
-      sentDate: new Date().getTime()
-    });
+    // io.emit(msg.NEW, msg.generate(message.sender, message.text));
+    socket.broadcast.emit(msg.NEW, msg.generate(message.sender, message.text));
   });
 
   socket.on('disconnect', () => {
