@@ -1,3 +1,7 @@
+var params = jQuery.deparam(window.location.search);
+console.log(params);
+// var username = jQuery('[name=username]');
+// username.val(params.name);
 var socket = io();
 
 function scrollToBottom() {
@@ -21,18 +25,34 @@ function scrollToBottom() {
 }
 
 socket.on('connect', () => {
-  console.log('Connected to server');
+  console.log('Connected to server.');
   // socket.emit('sendMessage', {
   //   sender: 'Stephen',
   //   text: 'Hey bro!'
   // });
+  socket.emit('join', params, function (err) {
+    if (err) {
+      alert(err);
+      window.location.href = '/';
+    }else {
+      console.log('No error joining chat.');
+    }
+  });
 });
 
 socket.on('disconnect', () => {
-  console.log('Disconnected from server');
+  console.log('Disconnected from server.');
 });
 
-var username = jQuery('[name=username]');
+socket.on('updateUserList', function (list) {
+  console.log(list);
+  var ul = jQuery('<ul></ul>');
+
+  list.forEach(function (user) {
+    ul.append(jQuery('<li></li>').text(user));
+  });
+  jQuery('#users').html(ul);
+});
 
 socket.on('newMessage', (message) => {
   console.log('New Message', message);
@@ -40,7 +60,7 @@ socket.on('newMessage', (message) => {
   var formattedt = moment(message.sendDate).format('h:mm a');
 
   var template = jQuery('#message-template').html();
-  if (username.val() === message.sender) message.sender = 'Me';
+  if (params.name === message.sender) message.sender = 'Me';
 
   var html = Mustache.render(template, {
     sender: message.sender,
@@ -58,7 +78,7 @@ socket.on('newMessage', (message) => {
 socket.on('newGeolocationMessage', (message) => {
   var formattedt = moment(message.sendDate).format('h:mm a');
 
-  if (username.val() === message.sender) message.sender = 'Me';
+  if (params.name === message.sender) message.sender = 'Me';
 
   var template = jQuery('#location-message-template').html();
   var html = Mustache.render(template, {
@@ -82,7 +102,7 @@ jQuery('#message-form').on('submit', function (event) {
   event.preventDefault();
   var input = jQuery('[name=message]');
   var message = input.val();
-  var sender = username.val();
+  var sender = params.name;
 
   if (sender.trim() === '') {
     return alert('Please enter a username to join the chat!');
@@ -110,9 +130,9 @@ locationButton.on('click', function () {
     return;
   }
   
-  if (username.val().trim() === '') {
-    return alert('Please enter a username to join the chat!');
-  }
+  // if (params.name.trim() === '') {
+  //   return alert('Please enter a username to join the chat!');
+  // }
 
   locationButton.attr('disabled','disabled');
   locationButton.text('Sending...');
@@ -121,7 +141,7 @@ locationButton.on('click', function () {
     // console.log(position);
 
     socket.emit('sendGeolocationMessage',{
-      sender: username.val(),
+      sender: params.name,
       location: {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude
